@@ -22,10 +22,13 @@ export default class Order {
     if (this._items.length === 0) {
       throw new Error("Items are required");
     }
+    if (this._items.some((x) => x.quantity <= 0)) {
+      throw new Error("Quantity should be greater than zero");
+    }
     return true;
   }
 
   total(): number {
-    return this._items.reduce((arr, item) => arr + item._price, 0);
+    return this._items.reduce((arr, item) => arr + item.total(), 0);
   }
 }
