@@ -11,17 +11,13 @@ import OrderItem from "../../domain/entity/order_item";
 import Order from "../../domain/entity/order";
 import CustomerRepository from "./customer.repository";
 import OrderRepository from "./order.repository";
+import { sequelizeInstance } from "./create-instance";
 
 describe("Order repository test", () => {
   let sequelize: Sequelize;
 
   beforeEach(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      logging: false,
-      sync: { force: true },
-    });
+    sequelize = sequelizeInstance;
 
     await sequelize.addModels([
       CustomerModel,
@@ -77,6 +73,99 @@ describe("Order repository test", () => {
           quantity: orderItem.quantity,
           order_id: "123",
           product_id: "123",
+        },
+      ],
+    });
+  });
+
+  it("should update a order", async () => {
+    const customerRepository = new CustomerRepository();
+    const customer = new Customer("123", "Customer 1");
+    const customer2 = new Customer("321", "Customer 2");
+    const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer.changeAddress(address);
+    customer2.changeAddress(address);
+    await customerRepository.create(customer);
+    await customerRepository.create(customer2);
+
+    const productRepository = new ProductRepository();
+    const product = new Product("123", "Product 1", 10);
+    await productRepository.create(product);
+    const product2 = new Product("321", "Product 2", 100);
+    await productRepository.create(product2);
+
+    const orderItem = new OrderItem(
+      "1",
+      product.name,
+      product.price,
+      product.id,
+      2
+    );
+
+    const orderItem2 = new OrderItem(
+      "2",
+      product2.name,
+      product2.price,
+      product2.id,
+      1
+    );
+
+    const order = new Order("123", "123", [orderItem]);
+    const orderRepository = new OrderRepository();
+    await orderRepository.create(order);
+
+    const orderModel = await OrderModel.findOne({
+      where: { id: order.id },
+      include: ["items"],
+    });
+
+    expect(orderModel?.toJSON()).toStrictEqual({
+      id: "123",
+      customer_id: "123",
+      total: order.total(),
+      items: [
+        {
+          id: orderItem.id,
+          name: orderItem.name,
+          price: orderItem.price,
+          quantity: orderItem.quantity,
+          order_id: "123",
+          product_id: "123",
+        },
+      ],
+    });
+
+    order.changeCustomer("321");
+    order.updateItems([orderItem, orderItem2]);
+    await orderRepository.update(order);
+
+    const orderModel2 = await OrderModel.findOne({
+      where: { id: order.id },
+      include: ["items"],
+    });
+
+    expect(orderModel2?.customer_id).toEqual(order.customerId);
+    expect(orderModel2?.items).toHaveLength(2);
+    expect(orderModel2?.toJSON()).toStrictEqual({
+      id: "123",
+      customer_id: "321",
+      total: order.total(),
+      items: [
+        {
+          id: orderItem.id,
+          name: orderItem.name,
+          price: orderItem.price,
+          quantity: orderItem.quantity,
+          order_id: "123",
+          product_id: "123",
+        },
+        {
+          id: orderItem2.id,
+          name: orderItem2.name,
+          price: orderItem2.price,
+          quantity: orderItem2.quantity,
+          order_id: "123",
+          product_id: "321",
         },
       ],
     });
