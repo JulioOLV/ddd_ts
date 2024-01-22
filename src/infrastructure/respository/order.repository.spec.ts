@@ -11,7 +11,7 @@ import OrderItem from "../../domain/entity/order_item";
 import Order from "../../domain/entity/order";
 import CustomerRepository from "./customer.repository";
 import OrderRepository from "./order.repository";
-import { sequelizeInstance } from "./create-instance";
+import CreateDbInstance, { sequelizeInstance } from "./create-instance";
 
 describe("Order repository test", () => {
   let sequelize: Sequelize;
@@ -152,20 +152,20 @@ describe("Order repository test", () => {
       total: order.total(),
       items: [
         {
-          id: orderItem.id,
-          name: orderItem.name,
-          price: orderItem.price,
-          quantity: orderItem.quantity,
-          order_id: "123",
-          product_id: "123",
-        },
-        {
           id: orderItem2.id,
           name: orderItem2.name,
           price: orderItem2.price,
           quantity: orderItem2.quantity,
           order_id: "123",
           product_id: "321",
+        },
+        {
+          id: orderItem.id,
+          name: orderItem.name,
+          price: orderItem.price,
+          quantity: orderItem.quantity,
+          order_id: "123",
+          product_id: "123",
         },
       ],
     });

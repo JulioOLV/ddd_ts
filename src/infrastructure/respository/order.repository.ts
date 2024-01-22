@@ -28,8 +28,8 @@ export default class OrderRepository implements OrderRepositoryInterface {
         transaction,
       });
 
-      let itemsQuantity = entity.items.length;
-      while (itemsQuantity === 0) {
+      let itemsQuantity = entity.items.length - 1;
+      while (itemsQuantity > -1) {
         await OrderItemModel.create(
           {
             id: entity.items[itemsQuantity].id,
@@ -37,6 +37,7 @@ export default class OrderRepository implements OrderRepositoryInterface {
             price: entity.items[itemsQuantity].price,
             product_id: entity.items[itemsQuantity].productId,
             quantity: entity.items[itemsQuantity].quantity,
+            order_id: entity.id,
           },
           { transaction }
         );
@@ -44,6 +45,7 @@ export default class OrderRepository implements OrderRepositoryInterface {
       }
       await transaction.commit();
     } catch (error) {
+      console.error(error);
       await transaction.rollback();
     }
   }
