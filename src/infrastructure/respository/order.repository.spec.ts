@@ -11,7 +11,7 @@ import OrderItem from "../../domain/entity/order_item";
 import Order from "../../domain/entity/order";
 import CustomerRepository from "./customer.repository";
 import OrderRepository from "./order.repository";
-import CreateDbInstance, { sequelizeInstance } from "./create-instance";
+import { sequelizeInstance } from "./create-instance";
 
 describe("Order repository test", () => {
   let sequelize: Sequelize;
