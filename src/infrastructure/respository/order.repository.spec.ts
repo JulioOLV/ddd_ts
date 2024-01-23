@@ -28,10 +28,6 @@ describe("Order repository test", () => {
     await sequelize.sync();
   });
 
-  afterEach(async () => {
-    await sequelize.close();
-  });
-
   it("should create a new order", async () => {
     const customerRepository = new CustomerRepository();
     const customer = new Customer("123", "Customer 1");
