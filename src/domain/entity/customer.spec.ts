@@ -51,4 +51,23 @@ describe("Customer unit tests", () => {
     customer.addRewardPoints(10);
     expect(customer.rewardPoints).toBe(20);
   });
+
+  it("should create new customer and notify", () => {
+    const customer = new Customer("123", "Eduardo");
+    const spyEventHandler = jest.spyOn(customer, "customerCreated");
+
+    customer.customerCreated();
+
+    expect(spyEventHandler).toHaveBeenCalled();
+  });
+
+  it("should update address and notify", () => {
+    const customer = new Customer("123", "Julio");
+    const address = new Address("Rua dois", 2, "12345-678", "São Paulo");
+    const spyEventHandler = jest.spyOn(customer, "customerAddressChanged");
+
+    customer.changeAddress(address);
+
+    expect(spyEventHandler).toHaveBeenCalled();
+  });
 });
