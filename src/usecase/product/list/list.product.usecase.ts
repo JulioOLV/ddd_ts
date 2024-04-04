@@ -9,7 +9,7 @@ export default class ListProductUseCase {
     this.productRepository = productRepository;
   }
 
-  async execute(input: InputListProductDto): Promise<OutputListProductDto> {
+  async execute(_: InputListProductDto): Promise<OutputListProductDto> {
     const productList = await this.productRepository.findAll();
 
     return OutputMapper.toOutput(productList);
