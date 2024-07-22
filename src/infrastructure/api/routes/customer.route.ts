@@ -1,12 +1,13 @@
-import type { Request, Response } from 'express';
-import * as express from 'express';
-import CustomerCreateUseCase from '../../../usecase/customer/create/create.customer.usecase';
-import CustomerRepository from '../../customer/repository/sequelize/customer.repository';
-import ListCustomerUseCase from '../../../usecase/customer/list/list.customer.usecase';
+import type { Request, Response } from "express";
+import * as express from "express";
+import CustomerCreateUseCase from "../../../usecase/customer/create/create.customer.usecase";
+import CustomerRepository from "../../customer/repository/sequelize/customer.repository";
+import ListCustomerUseCase from "../../../usecase/customer/list/list.customer.usecase";
+import CustomerPresenter from "../presenters/customer.presenter";
 
 export const customerRoute = express.Router();
 
-customerRoute.post('/', async (req: Request, res: Response) => {
+customerRoute.post("/", async (req: Request, res: Response) => {
   const usecase = new CustomerCreateUseCase(new CustomerRepository());
 
   try {
@@ -33,6 +34,6 @@ customerRoute.get("/", async (_: Request, res: Response) => {
 
   res.format({
     json: async () => res.send(output),
-    // xml: async () => res.send(CustomerPresenter.listXML(output)),
+    xml: async () => res.send(CustomerPresenter.listXML(output)),
   });
 });
